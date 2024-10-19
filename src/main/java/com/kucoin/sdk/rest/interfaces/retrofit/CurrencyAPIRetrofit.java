@@ -3,10 +3,7 @@
  */
 package com.kucoin.sdk.rest.interfaces.retrofit;
 
-import com.kucoin.sdk.rest.response.CurrencyDetailResponse;
-import com.kucoin.sdk.rest.response.CurrencyDetailV2Response;
-import com.kucoin.sdk.rest.response.CurrencyResponse;
-import com.kucoin.sdk.rest.response.KucoinResponse;
+import com.kucoin.sdk.rest.response.*;
 import retrofit2.Call;
 import retrofit2.http.GET;
 import retrofit2.http.Path;
@@ -32,7 +29,14 @@ public interface CurrencyAPIRetrofit {
     Call<KucoinResponse<CurrencyDetailV2Response>> getCurrencyDetailV2(@Path("currency") String currency,
                                                                                 @Query("chain") String chain);
 
+    @GET(value = "api/v3/currencies")
+    Call<KucoinResponse<List<CurrencyDetailV2Response>>> getCurrenciesV3();
+
 
     @GET(value = "api/v1/prices")
     Call<KucoinResponse<Map<String, BigDecimal>>> getFiatPrice(@Query("base") String base, @Query("currencies") String currencies);
+
+    @GET(value = "api/v3/currencies/{currency}")
+    Call<KucoinResponse<CurrencyDetailV3Response>> getCurrencyDetailV3(@Path("currency") String currency,
+                                                                       @Query("chain") String chain);
 }

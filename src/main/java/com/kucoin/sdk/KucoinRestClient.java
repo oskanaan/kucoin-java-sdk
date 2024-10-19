@@ -40,4 +40,13 @@ public interface KucoinRestClient {
 
     LoanAPI loanAPI();
 
+    IsolatedAPI isolatedAPI();
+
+    OcoOrderAPI ocoOrderAPI();
+
+    EarnAPI earnAPI();
+
+    VipLendingAPI vipLendingAPI();
+
+    HFMarginAPI HFMarginAPI();
 }

@@ -14,7 +14,6 @@ import com.kucoin.sdk.websocket.event.AccountChangeEvent;
 import com.kucoin.sdk.websocket.event.AdvancedOrderEvent;
 import com.kucoin.sdk.websocket.event.OrderActivateEvent;
 import com.kucoin.sdk.websocket.event.OrderChangeEvent;
-import org.hamcrest.core.Is;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -29,7 +28,7 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 
-import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 /**
@@ -46,12 +45,15 @@ public class KucoinPrivateWSClientTest {
 
     @BeforeClass
     public static void setupClass() throws Exception {
-        KucoinClientBuilder builder = new KucoinClientBuilder().withBaseUrl("https://openapi-sandbox.kucoin.com")
-                .withApiKey("5f927beac1cfb50006afcd3c", "943aede3-1dd2-46fe-9654-7df9f275e118", "12121212")
+
+        KucoinClientBuilder builder = new KucoinClientBuilder().withBaseUrl("https://openapi-v2.kucoin.com")
+                .withApiKey("", "", "")
                 // Version number of api-key
                 .withApiKeyVersion(ApiKeyVersionEnum.V2.getVersion());
+
         kucoinRestClient = builder.buildRestClient();
         kucoinPrivateWSClient = builder.buildPrivateWSClient();
+
     }
 
     @AfterClass
@@ -94,11 +96,12 @@ public class KucoinPrivateWSClientTest {
         CountDownLatch gotEvent = new CountDownLatch(1);
 
         kucoinPrivateWSClient.onOrderChange(response -> {
+            OrderChangeEvent data = response.getData();
             LOGGER.info("Got response");
-            event.set(response.getData());
-            kucoinPrivateWSClient.unsubscribe(PrivateChannelEnum.ORDER_CHANGE, "ETH-BTC", "BTC-USDT");
+            event.set(data);
+            kucoinPrivateWSClient.unsubscribe(PrivateChannelEnum.ORDER_CHANGE);
             gotEvent.countDown();
-        }, "ETH-BTC", "BTC-USDT");
+        });
 
         Thread.sleep(1000);
 
@@ -113,8 +116,35 @@ public class KucoinPrivateWSClientTest {
         }).start();
 
         LOGGER.info("Waiting...");
-        assertTrue(gotEvent.await(20, TimeUnit.SECONDS));
+        assertTrue(gotEvent.await(200, TimeUnit.SECONDS));
         System.out.println(event.get());
+    }
+
+    @Test
+    public void onOrderV2Change() throws Exception {
+        kucoinPrivateWSClient.onOrderV2Change(response -> {
+            System.out.println(response.getData());
+            kucoinPrivateWSClient.unsubscribe(PrivateChannelEnum.ORDER_V2_CHANGE);
+        });
+        Thread.sleep(100000);
+    }
+
+    @Test
+    public void onMarginPosition() throws Exception {
+        kucoinPrivateWSClient.onMarginPosition(response -> {
+            System.out.println(response.getData());
+            kucoinPrivateWSClient.unsubscribe(PrivateChannelEnum.MARGIN_POSITION_CHANGE);
+        });
+        Thread.sleep(100000);
+    }
+
+    @Test
+    public void onMarginLoan() throws Exception {
+        kucoinPrivateWSClient.onMarginLoan(response -> {
+            System.out.println(response.getData());
+            kucoinPrivateWSClient.unsubscribe(PrivateChannelEnum.MARGIN_LOAN_CHANGE,"USDT");
+        },"USDT");
+        Thread.sleep(100000);
     }
 
     @Test
@@ -124,7 +154,8 @@ public class KucoinPrivateWSClientTest {
 
         kucoinPrivateWSClient.onAccountBalance(response -> {
             LOGGER.info("Got response");
-            event.set(response.getData());
+            AccountChangeEvent data = response.getData();
+            event.set(data);
             kucoinPrivateWSClient.unsubscribe(PrivateChannelEnum.ACCOUNT);
             gotEvent.countDown();
         });
@@ -142,7 +173,7 @@ public class KucoinPrivateWSClientTest {
         }).start();
 
         LOGGER.info("Waiting...");
-        assertTrue(gotEvent.await(20, TimeUnit.SECONDS));
+        assertTrue(gotEvent.await(200, TimeUnit.SECONDS));
         System.out.println(event.get());
     }
 
@@ -150,7 +181,7 @@ public class KucoinPrivateWSClientTest {
     public void ping() throws Exception {
         String requestId = "1234567890";
         String ping = kucoinPrivateWSClient.ping(requestId);
-        assertThat(ping, Is.is(requestId));
+        assertEquals(requestId, ping);
     }
 
     @Test
@@ -198,7 +229,7 @@ public class KucoinPrivateWSClientTest {
 
     private void innerTransfer2() throws IOException {
         List<AccountBalancesResponse> accountBalancesResponses = kucoinRestClient.accountAPI().listAccounts("USDT", null);
-        assertThat(accountBalancesResponses.size(), Is.is(2));
+        assertEquals(2, accountBalancesResponses.size());
         kucoinRestClient.accountAPI().innerTransfer2(new AccountTransferV2Request(String.valueOf(System.currentTimeMillis()),
                 "USDT", "trade", "main", new BigDecimal("0.000001")));
     }

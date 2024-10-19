@@ -6,16 +6,55 @@
 
     <groupId>com.kucoin</groupId>
     <artifactId>kucoin-java-sdk</artifactId>
-    <version>1.0.6</version>
+    <version>1.0.15</version>
 
     <name>kucoin-java-sdk</name>
-    <url>http://www.kucoin.com</url>
+    <description>kucoin-java-sdk</description>
+    <url>https://www.kucoin.com</url>
+
+    <licenses>
+        <license>
+            <name>BSD 3-Clause</name>
+            <url>https://spdx.org/licenses/BSD-3-Clause.html</url>
+        </license>
+    </licenses>
+    <scm>
+        <connection>scm:git:git@github.com:Kucoin/kucoin-java-sdk.git</connection>
+        <developerConnection>scm:git:git@github.com:Kucoin/kucoin-java-sdk.git</developerConnection>
+        <url>https://github.com/Kucoin/kucoin-java-sdk</url>
+    </scm>
+    <developers>
+        <developer>
+            <name>Blaze Tan</name>
+            <email>blaze.tan@kupotech.com</email>
+            <roles>
+                <role>Developer</role>
+            </roles>
+            <timezone>+8</timezone>
+        </developer>
+        <developer>
+            <name>Jason Yao</name>
+            <email>jason.yao@kupotech.com</email>
+            <roles>
+                <role>Developer</role>
+            </roles>
+            <timezone>+8</timezone>
+        </developer>
+        <developer>
+            <name>Colt Han</name>
+            <email>colt.han@kupotech.com</email>
+            <roles>
+                <role>Developer</role>
+            </roles>
+            <timezone>+8</timezone>
+        </developer>
+    </developers>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <java.version>1.8</java.version>
-        <com.squareup.retrofit2.version>2.5.0</com.squareup.retrofit2.version>
+        <com.squareup.retrofit2.version>2.9.0</com.squareup.retrofit2.version>
     </properties>
 
     <dependencies>
@@ -49,29 +88,29 @@
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
-            <version>1.16.18</version>
+            <version>1.18.34</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>jcl-over-slf4j</artifactId>
-            <version>1.7.25</version>
+            <version>2.0.13</version>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-simple</artifactId>
-            <version>1.7.25</version>
+            <version>2.0.13</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>commons-codec</groupId>
             <artifactId>commons-codec</artifactId>
-            <version>1.10</version>
+            <version>1.17.0</version>
         </dependency>
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-lang3</artifactId>
-            <version>3.6</version>
+            <version>3.14.0</version>
         </dependency>
         <dependency>
             <groupId>org.apache.commons</groupId>
@@ -90,6 +129,91 @@
                     <target>${java.version}</target>
                 </configuration>
             </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <configuration>
+                    <archive>
+                        <addMavenDescriptor>false</addMavenDescriptor>
+                    </archive>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-source-plugin</artifactId>
+                <version>2.2.1</version>
+                <executions>
+                    <execution>
+                        <id>attach-sources</id>
+                        <goals>
+                            <goal>jar-no-fork</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <version>2.10.3</version>
+                <executions>
+                    <execution>
+                        <id>attach-javadocs</id>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.sonatype.plugins</groupId>
+                <artifactId>nexus-staging-maven-plugin</artifactId>
+                <version>1.6.7</version>
+                <extensions>true</extensions>
+                <configuration>
+                    <serverId>ossrh</serverId>
+                    <nexusUrl>https://s01.oss.sonatype.org/</nexusUrl>
+                    <autoReleaseAfterClose>true</autoReleaseAfterClose>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-gpg-plugin</artifactId>
+                <version>1.6</version>
+                <executions>
+                    <execution>
+                        <id>sign-artifacts</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>sign</goal>
+                        </goals>
+                        <configuration>
+                            <gpgArguments>
+                                <arg>--pinentry-mode</arg>
+                                <arg>loopback</arg>
+                            </gpgArguments>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
     </build>
+    <repositories>
+        <repository>
+            <id>maven_central</id>
+            <name>Maven Central</name>
+            <url>https://repo.maven.apache.org/maven2/</url>
+        </repository>
+    </repositories>
+
+    <distributionManagement>
+        <snapshotRepository>
+            <id>ossrh</id>
+            <url>https://s01.oss.sonatype.org/content/repositories/snapshots</url>
+        </snapshotRepository>
+        <repository>
+            <id>ossrh</id>
+            <url>https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+        </repository>
+    </distributionManagement>
+
 </project>

@@ -69,6 +69,16 @@ public class KucoinClientBuilder {
 
     private LoanAPI loanAPI;
 
+    private IsolatedAPI isolatedAPI;
+
+    private OcoOrderAPI ocoOrderAPI;
+
+    private EarnAPI earnAPI;
+
+    private VipLendingAPI vipLendingAPI;
+
+    private HFMarginAPI hfMarginAPI;
+
     public KucoinRestClient buildRestClient() {
         if (StringUtils.isBlank(baseUrl)) baseUrl = APIConstants.API_BASE_URL;
         if (userAPI == null) userAPI = new UserAPIAdapter(baseUrl, apiKey, secret, passPhrase, apiKeyVersion);
@@ -80,12 +90,17 @@ public class KucoinClientBuilder {
         if (stopOrderAPI == null) stopOrderAPI = new StopOrderAPIAdapter(baseUrl, apiKey, secret, passPhrase, apiKeyVersion);
         if (marginAPI == null) marginAPI = new MarginAPIAdapter(baseUrl, apiKey, secret, passPhrase, apiKeyVersion);
         if (loanAPI == null) loanAPI = new LoanAPIAdapter(baseUrl, apiKey, secret, passPhrase, apiKeyVersion);
+        if (isolatedAPI == null) isolatedAPI = new IsolatedAPIAdapter(baseUrl, apiKey, secret, passPhrase, apiKeyVersion);
         if (currencyAPI == null) currencyAPI = new CurrencyAPIAdaptor(baseUrl);
         if (timeAPI == null) timeAPI = new TimeAPIAdapter(baseUrl);
         if (commonAPI == null) commonAPI = new CommonAPIAdapter(baseUrl);
         if (symbolAPI == null) symbolAPI = new SymbolAPIAdaptor(baseUrl);
-        if (orderBookAPI == null) orderBookAPI = new OrderBookAPIAdapter(baseUrl);
+        if (orderBookAPI == null) orderBookAPI = new OrderBookAPIAdapter(baseUrl, apiKey, secret, passPhrase, apiKeyVersion);
         if (historyAPI == null) historyAPI = new HistoryAPIAdapter(baseUrl);
+        if (ocoOrderAPI == null) ocoOrderAPI = new OcoOrderAPIAdapter(baseUrl, apiKey, secret, passPhrase, apiKeyVersion);
+        if (earnAPI == null) earnAPI = new EarnAPIAdapter(baseUrl, apiKey, secret, passPhrase, apiKeyVersion);
+        if (vipLendingAPI == null) vipLendingAPI = new VipLendingAdapter(baseUrl, apiKey, secret, passPhrase, apiKeyVersion);
+        if (hfMarginAPI == null) hfMarginAPI = new HFMarginAPIAdapter(baseUrl, apiKey, secret, passPhrase, apiKeyVersion);
         return new KucoinRestClientImpl(this);
     }
 
@@ -139,6 +154,11 @@ public class KucoinClientBuilder {
 
     public KucoinClientBuilder withStopOrderAPI(StopOrderAPI stopOrderAPI) {
         this.stopOrderAPI = stopOrderAPI;
+        return this;
+    }
+
+    public KucoinClientBuilder withOcoOrderAPI(OcoOrderAPI ocoOrderAPI) {
+        this.ocoOrderAPI = ocoOrderAPI;
         return this;
     }
 

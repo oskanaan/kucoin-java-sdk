@@ -47,4 +47,14 @@ public class SymbolAPIAdaptor extends PublicRetrofitAPIImpl<SymbolAPIRetrofit> i
     public List<String> getMarketList() throws IOException {
         return super.executeSync(getAPIImpl().getMarketList());
     }
+
+    @Override
+    public List<SymbolResponse> getSymbolList(String market) throws IOException {
+        return super.executeSync(getAPIImpl().getSymbolList(market));
+    }
+
+    @Override
+    public SymbolResponse getSymbolDetail(String market) throws IOException {
+        return super.executeSync(getAPIImpl().getSymbolDetail(market));
+    }
 }
